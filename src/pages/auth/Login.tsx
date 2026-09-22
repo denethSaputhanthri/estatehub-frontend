@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
   const { login } = useAuth()
+  const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -10,27 +12,28 @@ function Login() {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault()
+  event: FormEvent<HTMLFormElement>
+) => {
+  event.preventDefault()
 
-    setError('')
-    setLoading(true)
+  setError('')
+  setLoading(true)
 
-    try {
-      await login({
-        email,
-        password,
-      })
+  try {
 
-      console.log('Login successful')
-    } catch (error) {
-      console.error(error)
-      setError('Invalid email or password.')
-    } finally {
-      setLoading(false)
-    }
+    await login({
+      email,
+      password,
+    })
+    navigate('/dashboard')
+
+  } catch (error) {
+    console.error('LOGIN ERROR:', error)
+    setError('Invalid email or password.')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
