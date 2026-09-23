@@ -11,7 +11,7 @@ interface AuthContextType {
     user: AuthenticatedUser | null
     token: string | null
     isAuthenticated: boolean
-    login: (data: LoginRequest) => Promise<void>
+    login: (data: LoginRequest) => Promise<AuthenticatedUser>
     register: (data: RegisterRequest) => Promise<void>
     logout: () => void
 }
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         () => { return localStorage.getItem('token') }
     )
 
-    const login = async (data: LoginRequest): Promise<void> => {
+    const login = async (data: LoginRequest): Promise<AuthenticatedUser> => {
         const response = await loginApi(data)
 
         const AuthenticatedUser: AuthenticatedUser = {
@@ -49,6 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(AuthenticatedUser)
         setToken(response.token)
         // Handle the response, e.g., store the token in localStorage
+        return AuthenticatedUser
     }
 
     const register = async (data: RegisterRequest): Promise<void> => {

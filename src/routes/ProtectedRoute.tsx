@@ -7,7 +7,7 @@ function ProtectedRoute() {
         
         return <Navigate to="/login" replace />;
     }
-    <Outlet />;
+    return <Outlet />;
 }
 
 export default ProtectedRoute;
