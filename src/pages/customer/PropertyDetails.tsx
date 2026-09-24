@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import DashboardLayout from '../../components/common/DashboardLayout'
 import { getPropertyById } from '../../api/propertyApi'
+import { createInquiry } from '../../api/inquiryApi'
 
 import type { Property } from '../../types/property'
 
@@ -10,10 +11,43 @@ function PropertyDetails() {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
 
+    const [message, setMessage] = useState('')
+    const [submitting, setSubmitting] = useState(false)
+    const [inquirySuccess, setInquirySuccess] = useState('')
+    const [inquiryError, setInquiryError] = useState('')
+
     const [property, setProperty] = useState<Property | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [selectedImage, setSelectedImage] = useState(0)
+
+    const handleSubmitInquiry = async () => {
+        if (!property) return
+
+        if (!message.trim()) {
+            setInquiryError('Please enter a message.')
+            return
+        }
+
+        try {
+            setSubmitting(true)
+            setInquirySuccess('')
+            setInquiryError('')
+
+            await createInquiry({
+                propertyId: property.id,
+                message: message.trim(),
+            })
+
+            setMessage('')
+            setInquirySuccess('Your inquiry has been submitted successfully.')
+        } catch (error) {
+            console.error(error)
+            setInquiryError('Failed to submit inquiry. Please try again.')
+        } finally {
+            setSubmitting(false)
+        }
+    }
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -96,8 +130,8 @@ function PropertyDetails() {
                                             type="button"
                                             onClick={() => setSelectedImage(index)}
                                             className={`h-20 w-24 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${selectedImage === index
-                                                    ? 'border-blue-500'
-                                                    : 'border-slate-700 hover:border-slate-500'
+                                                ? 'border-blue-500'
+                                                : 'border-slate-700 hover:border-slate-500'
                                                 }`}
                                         >
                                             <img
@@ -167,6 +201,55 @@ function PropertyDetails() {
                                         : 'Not specified'}
                                 </p>
                             </div>
+                        </div>
+                        <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
+                            <h2 className="text-xl font-semibold text-white">
+                                Send an Inquiry
+                            </h2>
+
+                            <p className="mt-1 text-sm text-slate-400">
+                                Interested in this property? Send a message to the property team.
+                            </p>
+
+                            <div className="mt-5">
+                                <textarea
+                                    value={message}
+                                    onChange={(event) => {
+                                        setMessage(event.target.value)
+                                        setInquiryError('')
+                                        setInquirySuccess('')
+                                    }}
+                                    placeholder="Write your inquiry..."
+                                    rows={5}
+                                    maxLength={2000}
+                                    className="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500"
+                                />
+
+                                <div className="mt-2 flex justify-between text-xs text-slate-500">
+                                    <span>Maximum 2000 characters</span>
+                                    <span>{message.length}/2000</span>
+                                </div>
+                            </div>
+
+                            {inquiryError && (
+                                <p className="mt-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                                    {inquiryError}
+                                </p>
+                            )}
+
+                            {inquirySuccess && (
+                                <p className="mt-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-400">
+                                    {inquirySuccess}
+                                </p>
+                            )}
+
+                            <button
+                                onClick={handleSubmitInquiry}
+                                disabled={submitting}
+                                className="mt-5 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                {submitting ? 'Sending...' : 'Send Inquiry'}
+                            </button>
                         </div>
 
                         <div className="mt-8">
