@@ -8,6 +8,8 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import AgentDashboard from "../pages/agent/AgentDashboard";
 import Properties from "../pages/customer/Properties";
 import PropertyDetails from "../pages/customer/PropertyDetails";
+import Inquiries from "../pages/customer/Inquiries";
+import Bookings from "../pages/customer/Bookings";
 
 
 function AppRoutes() {
@@ -23,12 +25,23 @@ function AppRoutes() {
 
                 // Customer Routes
                 <Route element={<RoleRoute allowedRoles={['CUSTOMER']} />}>
+                    // Customer Dashboard
                     <Route path="/customer/dashboard"
                         element={<CustomerDashboard />} />
+                    // Customer Properties
                     <Route path="/customer/properties"
                         element={<Properties />} />
+                    // Customer Property Details
                     <Route path="/customer/properties/:id"
                         element={<PropertyDetails />} />
+                    // Customer Inquiries
+                    <Route path="/customer/inquiries"
+                        element={<Inquiries />} />
+                    // Customer Bookings
+                    <Route path="/customer/bookings"
+                        element={<Bookings />} />
+                
+                    
                 </Route>
 
 
