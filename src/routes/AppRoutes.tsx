@@ -9,6 +9,7 @@ import AgentDashboard from "../pages/agent/AgentDashboard";
 import Properties from "../pages/customer/Properties";
 import PropertyDetails from "../pages/customer/PropertyDetails";
 import Inquiries from "../pages/customer/Inquiries";
+import Bookings from "../pages/customer/Bookings";
 
 
 function AppRoutes() {
@@ -36,6 +37,10 @@ function AppRoutes() {
                     // Customer Inquiries
                     <Route path="/customer/inquiries"
                         element={<Inquiries />} />
+                    // Customer Bookings
+                    <Route path="/customer/bookings"
+                        element={<Bookings />} />
+                
                     
                 </Route>
 

@@ -3,23 +3,36 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import DashboardLayout from '../../components/common/DashboardLayout'
 import { getPropertyById } from '../../api/propertyApi'
-import { createInquiry } from '../../api/inquiryApi'
+import { createInquiry, getAllInquiries } from '../../api/inquiryApi'
+import { createBooking } from '../../api/bookingApi'
+
+import { useAuth } from '../../context/AuthContext'
 
 import type { Property } from '../../types/property'
+import type { Inquiry } from '../../types/inquiry'
 
 function PropertyDetails() {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
-
-    const [message, setMessage] = useState('')
-    const [submitting, setSubmitting] = useState(false)
-    const [inquirySuccess, setInquirySuccess] = useState('')
-    const [inquiryError, setInquiryError] = useState('')
+    const { user } = useAuth()
 
     const [property, setProperty] = useState<Property | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [selectedImage, setSelectedImage] = useState(0)
+
+    // Inquiry state
+    const [message, setMessage] = useState('')
+    const [submitting, setSubmitting] = useState(false)
+    const [inquirySuccess, setInquirySuccess] = useState('')
+    const [inquiryError, setInquiryError] = useState('')
+
+    // Booking state
+    const [inquiry, setInquiry] = useState<Inquiry | null>(null)
+    const [visitDate, setVisitDate] = useState('')
+    const [bookingSubmitting, setBookingSubmitting] = useState(false)
+    const [bookingSuccess, setBookingSuccess] = useState('')
+    const [bookingError, setBookingError] = useState('')
 
     const handleSubmitInquiry = async () => {
         if (!property) return
@@ -40,12 +53,71 @@ function PropertyDetails() {
             })
 
             setMessage('')
-            setInquirySuccess('Your inquiry has been submitted successfully.')
+            setInquirySuccess(
+                'Your inquiry has been submitted successfully.'
+            )
+
+            // Refresh inquiries so the booking section
+            // becomes available immediately.
+            if (user) {
+                const inquiries = await getAllInquiries()
+
+                const customerInquiry = inquiries.find(
+                    (item) =>
+                        item.propertyId === property.id &&
+                        item.customerId === user.id
+                )
+
+                setInquiry(customerInquiry ?? null)
+            }
         } catch (error) {
             console.error(error)
-            setInquiryError('Failed to submit inquiry. Please try again.')
+            setInquiryError(
+                'Failed to submit inquiry. Please try again.'
+            )
         } finally {
             setSubmitting(false)
+        }
+    }
+
+    const handleBookVisit = async () => {
+        if (!inquiry) {
+            setBookingError(
+                'Please submit an inquiry for this property before booking a visit.'
+            )
+            return
+        }
+
+        if (!visitDate) {
+            setBookingError(
+                'Please select a visit date and time.'
+            )
+            return
+        }
+
+        try {
+            setBookingSubmitting(true)
+            setBookingError('')
+            setBookingSuccess('')
+
+            await createBooking({
+                inquiryId: inquiry.id,
+                visitDate,
+            })
+
+            setBookingSuccess(
+                'Your property visit has been booked successfully.'
+            )
+
+            setVisitDate('')
+        } catch (error) {
+            console.error(error)
+
+            setBookingError(
+                'Failed to book the visit. Please try again.'
+            )
+        } finally {
+            setBookingSubmitting(false)
         }
     }
 
@@ -74,6 +146,33 @@ function PropertyDetails() {
         fetchProperty()
     }, [id])
 
+    useEffect(() => {
+        const loadInquiry = async () => {
+            if (!id || !user) {
+                return
+            }
+
+            try {
+                const inquiries = await getAllInquiries()
+
+                const customerInquiry = inquiries.find(
+                    (item) =>
+                        item.propertyId === Number(id) &&
+                        item.customerId === user.id
+                )
+
+                setInquiry(customerInquiry ?? null)
+            } catch (error) {
+                console.error(
+                    'Failed to load inquiry:',
+                    error
+                )
+            }
+        }
+
+        loadInquiry()
+    }, [id, user])
+
     if (loading) {
         return (
             <DashboardLayout>
@@ -93,7 +192,9 @@ function PropertyDetails() {
                     </p>
 
                     <button
-                        onClick={() => navigate('/customer/properties')}
+                        onClick={() =>
+                            navigate('/customer/properties')
+                        }
                         className="mt-4 rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600"
                     >
                         Back to Properties
@@ -107,7 +208,9 @@ function PropertyDetails() {
         <DashboardLayout>
             <div>
                 <button
-                    onClick={() => navigate('/customer/properties')}
+                    onClick={() =>
+                        navigate('/customer/properties')
+                    }
                     className="mb-6 text-sm text-blue-400 transition hover:text-blue-300"
                 >
                     ← Back to Properties
@@ -117,30 +220,44 @@ function PropertyDetails() {
                     {property.imageUrls.length > 0 ? (
                         <div>
                             <img
-                                src={property.imageUrls[selectedImage]}
+                                src={
+                                    property.imageUrls[
+                                        selectedImage
+                                    ]
+                                }
                                 alt={property.title}
                                 className="h-96 w-full object-cover"
                             />
 
                             {property.imageUrls.length > 1 && (
                                 <div className="flex gap-3 overflow-x-auto bg-slate-950 p-4">
-                                    {property.imageUrls.map((imageUrl, index) => (
-                                        <button
-                                            key={imageUrl}
-                                            type="button"
-                                            onClick={() => setSelectedImage(index)}
-                                            className={`h-20 w-24 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${selectedImage === index
-                                                ? 'border-blue-500'
-                                                : 'border-slate-700 hover:border-slate-500'
+                                    {property.imageUrls.map(
+                                        (imageUrl, index) => (
+                                            <button
+                                                key={imageUrl}
+                                                type="button"
+                                                onClick={() =>
+                                                    setSelectedImage(
+                                                        index
+                                                    )
+                                                }
+                                                className={`h-20 w-24 flex-shrink-0 overflow-hidden rounded-lg border-2 transition ${
+                                                    selectedImage ===
+                                                    index
+                                                        ? 'border-blue-500'
+                                                        : 'border-slate-700 hover:border-slate-500'
                                                 }`}
-                                        >
-                                            <img
-                                                src={imageUrl}
-                                                alt={`${property.title} ${index + 1}`}
-                                                className="h-full w-full object-cover"
-                                            />
-                                        </button>
-                                    ))}
+                                            >
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`${property.title} ${
+                                                        index + 1
+                                                    }`}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </button>
+                                        )
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -176,7 +293,8 @@ function PropertyDetails() {
                                 </p>
 
                                 <p className="mt-2 text-xl font-bold text-white">
-                                    Rs. {property.price.toLocaleString()}
+                                    Rs.{' '}
+                                    {property.price.toLocaleString()}
                                 </p>
                             </div>
 
@@ -202,20 +320,25 @@ function PropertyDetails() {
                                 </p>
                             </div>
                         </div>
+
+                        {/* Inquiry Section */}
                         <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
                             <h2 className="text-xl font-semibold text-white">
                                 Send an Inquiry
                             </h2>
 
                             <p className="mt-1 text-sm text-slate-400">
-                                Interested in this property? Send a message to the property team.
+                                Interested in this property? Send a
+                                message to the property team.
                             </p>
 
                             <div className="mt-5">
                                 <textarea
                                     value={message}
                                     onChange={(event) => {
-                                        setMessage(event.target.value)
+                                        setMessage(
+                                            event.target.value
+                                        )
                                         setInquiryError('')
                                         setInquirySuccess('')
                                     }}
@@ -226,8 +349,13 @@ function PropertyDetails() {
                                 />
 
                                 <div className="mt-2 flex justify-between text-xs text-slate-500">
-                                    <span>Maximum 2000 characters</span>
-                                    <span>{message.length}/2000</span>
+                                    <span>
+                                        Maximum 2000 characters
+                                    </span>
+
+                                    <span>
+                                        {message.length}/2000
+                                    </span>
                                 </div>
                             </div>
 
@@ -248,10 +376,84 @@ function PropertyDetails() {
                                 disabled={submitting}
                                 className="mt-5 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {submitting ? 'Sending...' : 'Send Inquiry'}
+                                {submitting
+                                    ? 'Sending...'
+                                    : 'Send Inquiry'}
                             </button>
                         </div>
 
+                        {/* Booking Section */}
+                        <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
+                            <h2 className="text-xl font-semibold text-white">
+                                Book a Property Visit
+                            </h2>
+
+                            <p className="mt-1 text-sm text-slate-400">
+                                Schedule a visit to view this
+                                property in person.
+                            </p>
+
+                            {!inquiry ? (
+                                <div className="mt-5 rounded-lg bg-yellow-500/10 px-4 py-3">
+                                    <p className="text-sm text-yellow-400">
+                                        Please submit an inquiry for
+                                        this property before booking
+                                        a visit.
+                                    </p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="mt-5">
+                                        <label
+                                            htmlFor="visitDate"
+                                            className="mb-2 block text-sm font-medium text-slate-300"
+                                        >
+                                            Visit Date & Time
+                                        </label>
+
+                                        <input
+                                            id="visitDate"
+                                            type="datetime-local"
+                                            value={visitDate}
+                                            onChange={(event) => {
+                                                setVisitDate(
+                                                    event.target.value
+                                                )
+                                                setBookingError('')
+                                                setBookingSuccess('')
+                                            }}
+                                            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-blue-500"
+                                        />
+                                    </div>
+
+                                    {bookingError && (
+                                        <p className="mt-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                                            {bookingError}
+                                        </p>
+                                    )}
+
+                                    {bookingSuccess && (
+                                        <p className="mt-4 rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-400">
+                                            {bookingSuccess}
+                                        </p>
+                                    )}
+
+                                    <button
+                                        onClick={handleBookVisit}
+                                        disabled={
+                                            bookingSubmitting
+                                        }
+                                        className="mt-5 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {bookingSubmitting
+                                            ? 'Booking...'
+                                            : 'Book Visit'}
+                                    </button>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Description */}
                         <div className="mt-8">
                             <h2 className="text-xl font-semibold text-white">
                                 Description
@@ -263,6 +465,7 @@ function PropertyDetails() {
                             </p>
                         </div>
 
+                        {/* Owner / Agent */}
                         <div className="mt-8 grid gap-4 border-t border-slate-800 pt-6 md:grid-cols-2">
                             <div>
                                 <p className="text-sm text-slate-500">
@@ -280,7 +483,8 @@ function PropertyDetails() {
                                 </p>
 
                                 <p className="mt-1 text-white">
-                                    {property.agentId ?? 'Not assigned'}
+                                    {property.agentId ??
+                                        'Not assigned'}
                                 </p>
                             </div>
                         </div>
