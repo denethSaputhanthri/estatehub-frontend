@@ -15,6 +15,8 @@ import EditProperty from "../pages/seller/EditProperty";
 import AddProperty from "../pages/seller/AddProperty";
 import SellerBookings from "../pages/seller/SellerBookings";
 import SellerInquiries from "../pages/seller/SellerInquiries";
+import AgentInquiries from "../pages/agent/AgentInquiries";
+import AgentBookings from "../pages/agent/AgentBookings";
 
 
 function AppRoutes() {
@@ -76,8 +78,15 @@ function AppRoutes() {
 
                 // Agent Routes
                 <Route element={<RoleRoute allowedRoles={['AGENT']} />}>
+                    // Agent Dashboard
                     <Route path="/agent/dashboard"
-                        element={<AgentDashboard />} />
+                        element={<AgentDashboard/>} />
+                    // Agent Inquiries
+                    <Route path="/agent/inquiries"
+                        element={<AgentInquiries />}/>
+                    // Agent Bookings
+                    <Route path="/agent/bookings"
+                        element={<AgentBookings />}/>
                 </Route>
                 
 
