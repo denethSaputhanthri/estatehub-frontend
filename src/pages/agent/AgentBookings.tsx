@@ -6,6 +6,7 @@ import {
 } from '../../api/bookingApi'
 
 import type { Booking } from '../../types/booking'
+import DashboardLayout from '../../components/common/DashboardLayout'
 
 function AgentBookings() {
   const [bookings, setBookings] = useState<Booking[]>([])
@@ -100,6 +101,7 @@ function AgentBookings() {
   }
 
   return (
+    
     <div className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-slate-800 bg-slate-900">
         <div className="mx-auto max-w-7xl px-6 py-5">
