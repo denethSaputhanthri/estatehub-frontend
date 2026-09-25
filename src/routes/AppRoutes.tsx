@@ -13,6 +13,8 @@ import Bookings from "../pages/customer/Bookings";
 import MyProperties from "../pages/seller/MyProperties";
 import EditProperty from "../pages/seller/EditProperty";
 import AddProperty from "../pages/seller/AddProperty";
+import SellerBookings from "../pages/seller/SellerBookings";
+import SellerInquiries from "../pages/seller/SellerInquiries";
 
 
 function AppRoutes() {
@@ -62,6 +64,12 @@ function AppRoutes() {
                     // Seller Add Property
                     <Route path="/seller/add-property"
                         element={<AddProperty />} />
+                    // Seller Inquiries
+                    <Route path="/seller/inquiries"
+                        element={<SellerInquiries />} />
+                    // Seller Bookings
+                    <Route path="/seller/bookings"
+                        element={<SellerBookings />} />
 
               </Route>
 
