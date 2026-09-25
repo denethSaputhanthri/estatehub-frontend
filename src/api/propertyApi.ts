@@ -1,5 +1,6 @@
 import axiosInstance from "./axios";
 import type { 
+    CreatePropertyRequest,
     Property, 
     PropertyStatus, 
     PropertyType 
@@ -11,6 +12,16 @@ interface PropertySearchParams {
     status?: PropertyStatus;
     minPrice?: number;
     maxPrice?: number;
+}
+
+export const createProperty = async (request: CreatePropertyRequest): Promise<Property> => {
+    const response = await axiosInstance.post<Property>("/properties", request);
+    return response.data;
+}
+
+export const updateProperty = async (id: number, request: CreatePropertyRequest): Promise<Property> => {
+    const response = await axiosInstance.put<Property>(`/properties/${id}`, request);
+    return response.data;
 }
 
 export const getAllProperties = async (): Promise<Property[]> => {
@@ -26,4 +37,8 @@ export const getPropertyById = async (id: number): Promise<Property> => {
 export const searchProperties = async (params: PropertySearchParams): Promise<Property[]> => {
     const response = await axiosInstance.get<Property[]>("/properties/search", { params });
     return response.data;
+}
+
+export const deleteProperty = async (id: number): Promise<void> => {
+    await axiosInstance.delete(`/properties/${id}`);
 }

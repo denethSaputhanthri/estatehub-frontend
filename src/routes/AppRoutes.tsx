@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import CustomerDashboard from "../pages/customer/CustomerDashboard"
@@ -10,6 +10,9 @@ import Properties from "../pages/customer/Properties";
 import PropertyDetails from "../pages/customer/PropertyDetails";
 import Inquiries from "../pages/customer/Inquiries";
 import Bookings from "../pages/customer/Bookings";
+import MyProperties from "../pages/seller/MyProperties";
+import EditProperty from "../pages/seller/EditProperty";
+import AddProperty from "../pages/seller/AddProperty";
 
 
 function AppRoutes() {
@@ -47,9 +50,20 @@ function AppRoutes() {
 
                 // Seller Routes
                 <Route element={<RoleRoute allowedRoles={['SELLER']} />}>
+                    // Seller Dashboard
                     <Route path="/seller/dashboard"
                         element={<SellerDashboard />} />
-                </Route>
+                    // Seller Properties
+                    <Route path="/seller/properties"
+                        element={<MyProperties />} />
+                    // Seller Edit Property
+                    <Route path="/seller/edit-property"
+                        element={<EditProperty />} />
+                    // Seller Add Property
+                    <Route path="/seller/add-property"
+                        element={<AddProperty />} />
+
+              </Route>
 
 
                 // Agent Routes

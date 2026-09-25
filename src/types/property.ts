@@ -25,3 +25,15 @@ export interface Property {
   createdAt: string;
   updatedAt: string;
 }
+export interface CreatePropertyRequest {
+  title: string;
+  description?: string;
+  propertyType: PropertyType;
+  price: number;
+  size?: number;
+  location: string;
+  propertyStatus: PropertyStatus;
+  ownerId: number;
+  agentId: number;
+  imageUrls: string[];
+}
