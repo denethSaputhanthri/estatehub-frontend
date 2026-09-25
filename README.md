@@ -1,75 +1,396 @@
-# React + TypeScript + Vite
+# 🏠 EstateHub — Real Estate Management Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern real estate management platform frontend built with **React**. EstateHub provides role-based experiences for customers, sellers, agents, and administrators through a responsive and scalable web interface.
 
-Currently, two official plugins are available:
+The frontend is designed to integrate with the **EstateHub Spring Boot backend** through RESTful APIs.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🔐 Authentication & Authorization
 
-## Expanding the ESLint configuration
+* User login and authentication
+* Protected routes
+* Role-based route protection
+* Separate dashboards based on user roles
+* Automatic redirection for unauthorized users
+* Persistent authentication state
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 👤 User Roles
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+EstateHub supports multiple user roles:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* 🧑‍💼 **Customer**
+* 🏠 **Seller**
+* 🤝 **Agent**
+* 🛡️ **Admin**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Each role has access to its own dedicated dashboard and functionality.
 
+### 🏡 Property Management
+
+* Browse available properties
+* View properties by category
+* Property-focused customer interface
+* Property management foundation for sellers and agents
+* Structured property-related pages
+
+### 🎨 User Interface
+
+* Responsive design
+* Modern dashboard layouts
+* Reusable React components
+* Clean navigation
+* Role-specific interfaces
+* Mobile-friendly layouts
+
+---
+
+## 🛠️ Technologies
+
+| Technology   | Purpose                  |
+| ------------ | ------------------------ |
+| React        | Frontend framework       |
+| React Router | Client-side routing      |
+| JavaScript   | Application logic        |
+| Tailwind CSS | Styling                  |
+| Axios        | REST API communication   |
+| Vite         | Development & build tool |
+| ESLint       | Code quality             |
+
+---
+
+## 🏗️ Architecture
+
+The project follows a component-based React architecture with separate pages, routing, authentication, and reusable UI components.
+
+```text
+User
+ │
+ ▼
+React Application
+ │
+ ├── Authentication
+ │
+ ├── Protected Routes
+ │
+ ├── Role Routes
+ │
+ ├── Pages
+ │
+ ├── Components
+ │
+ └── API Services
+        │
+        ▼
+   EstateHub Backend
+        │
+        ▼
+   Spring Boot REST API
+        │
+        ▼
+     PostgreSQL
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📂 Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```text
+estatehub-frontend/
+│
+├── public/
+│
+├── src/
+│   │
+│   ├── assets/
+│   │
+│   ├── components/
+│   │
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   └── Login.jsx
+│   │   │
+│   │   ├── customer/
+│   │   │   ├── CustomerDashboard.jsx
+│   │   │   └── Properties.jsx
+│   │   │
+│   │   ├── seller/
+│   │   │   └── SellerDashboard.jsx
+│   │   │
+│   │   ├── agent/
+│   │   │   └── AgentDashboard.jsx
+│   │   │
+│   │   └── admin/
+│   │       └── AdminDashboard.jsx
+│   │
+│   ├── routes/
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── RoleRoute.jsx
+│   │   └── AppRoutes.jsx
+│   │
+│   ├── services/
+│   │   └── api.js
+│   │
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+│
+├── .env
+├── .gitignore
+├── package.json
+├── vite.config.js
+└── README.md
 ```
+
+---
+
+## 🔐 Route Protection
+
+EstateHub uses route protection to control access to authenticated pages.
+
+### Protected Routes
+
+Authenticated users can access protected application pages only after successful authentication.
+
+```text
+Public
+ │
+ ├── Login
+ │
+ ▼
+Authentication
+ │
+ ▼
+Protected Routes
+ │
+ ├── Customer
+ │
+ ├── Seller
+ │
+ ├── Agent
+ │
+ └── Admin
+```
+
+### Role-Based Routes
+
+Role-based routing ensures users can access only the pages associated with their assigned role.
+
+```text
+CUSTOMER → Customer Dashboard
+SELLER   → Seller Dashboard
+AGENT    → Agent Dashboard
+ADMIN    → Admin Dashboard
+```
+
+---
+
+## 🔌 Backend Integration
+
+EstateHub Frontend is designed to communicate with the **EstateHub Spring Boot backend** through REST APIs.
+
+```text
+React Frontend
+      │
+      │ HTTP / REST
+      ▼
+Spring Boot Backend
+      │
+      ▼
+PostgreSQL Database
+```
+
+Backend repository:
+
+**EstateHub Backend**
+
+```text
+https://github.com/denethSaputhanthri/real-estate-management-system-backend
+```
+
+---
+
+## ⚙️ Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+> Keep environment files containing sensitive configuration out of version control.
+
+The `.env` file should be included in `.gitignore`.
+
+---
+
+## 📋 Prerequisites
+
+Before running the project, make sure you have:
+
+* Node.js
+* npm
+* Git
+* EstateHub Backend running locally
+
+Check Node.js:
+
+```bash
+node -v
+```
+
+Check npm:
+
+```bash
+npm -v
+```
+
+---
+
+## 📥 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/denethSaputhanthri/estatehub-frontend.git
+```
+
+Navigate to the project:
+
+```bash
+cd estatehub-frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create the environment file:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+---
+
+## ▶️ Running the Application
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will normally be available at:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 🏗️ Production Build
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+---
+
+## 🧪 Code Quality
+
+Run ESLint:
+
+```bash
+npm run lint
+```
+
+Fix linting issues where possible before committing changes.
+
+---
+
+## 🚀 Future Development
+
+Planned features include:
+
+* JWT authentication integration
+* Property listing management
+* Property creation and editing
+* Property image uploads
+* Property search and filtering
+* Advanced property details
+* Customer property inquiries
+* Favorite properties
+* Property viewing appointments
+* Seller property management
+* Agent property management
+* Admin user management
+* Admin property moderation
+* Pagination
+* Sorting
+* Advanced search
+* Notifications
+* User profile management
+* Responsive mobile improvements
+
+---
+
+## 🎯 Project Goals
+
+EstateHub is designed to demonstrate modern frontend development practices while building a realistic real estate management platform.
+
+The project focuses on:
+
+* Component-based architecture
+* Reusable React components
+* Secure route handling
+* Role-based authorization
+* REST API integration
+* Responsive UI development
+* Maintainable project structure
+* Scalable frontend architecture
+
+---
+
+## 🔗 Related Project
+
+### EstateHub Backend
+
+Spring Boot backend providing REST APIs, security, database management, and business logic.
+
+```text
+https://github.com/denethSaputhanthri/real-estate-management-system-backend
+```
+
+---
+
+## 👨‍💻 Author
+
+**Deneth Saputhanthri**
+
+Software Engineering Undergraduate
+Colombo, Sri Lanka
+
+GitHub:
+
+```text
+https://github.com/denethSaputhanthri
+```
+
+---
+
+## 📄 License
+
+This project is developed for learning, portfolio, and software engineering practice purposes.
