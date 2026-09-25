@@ -1,5 +1,5 @@
 export type PropertyType = 
- |" HOUSE" 
+ | " HOUSE" 
  | " APARTMENT" 
  | "LAND" 
  | "COMMERCIAL";

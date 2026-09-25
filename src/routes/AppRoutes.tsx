@@ -15,6 +15,11 @@ import EditProperty from "../pages/seller/EditProperty";
 import AddProperty from "../pages/seller/AddProperty";
 import SellerBookings from "../pages/seller/SellerBookings";
 import SellerInquiries from "../pages/seller/SellerInquiries";
+import AgentInquiries from "../pages/agent/AgentInquiries";
+import AgentBookings from "../pages/agent/AgentBookings";
+import ManageUsers from "../pages/admin/ManageUsers";
+import ManageProperties from "../pages/admin/ManageProperties";
+import ManageInquiries from "../pages/admin/ManageInquiries";
 
 
 function AppRoutes() {
@@ -76,15 +81,33 @@ function AppRoutes() {
 
                 // Agent Routes
                 <Route element={<RoleRoute allowedRoles={['AGENT']} />}>
+                    // Agent Dashboard
                     <Route path="/agent/dashboard"
-                        element={<AgentDashboard />} />
+                        element={<AgentDashboard/>} />
+                    // Agent Inquiries
+                    <Route path="/agent/inquiries"
+                        element={<AgentInquiries />}/>
+                    // Agent Bookings
+                    <Route path="/agent/bookings"
+                        element={<AgentBookings />}/>
                 </Route>
                 
 
                 // Admin Routes
                 <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
+                    // Admin Dashboard
                     <Route path="/admin/dashboard" 
                         element={<AdminDashboard />} />
+                    // Admin Users
+                    <Route path="/admin/users"
+                        element={<ManageUsers />} />
+                    // Admin Properties
+                    <Route path="/admin/properties"
+                        element={<ManageProperties />} />
+                    // Admin Inquiries
+                    <Route path="/admin/transactions"
+                        element={<ManageInquiries />}/>
+
                 </Route>
             </Route>
         </Routes>
