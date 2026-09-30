@@ -297,6 +297,8 @@ function MapPlaceholder() {
 
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
+  const [filters, setFilters] = useState<FilterBarFilters>({});
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F6F4F1]">
@@ -308,7 +310,6 @@ export default function AdminDashboardPage() {
     return null;
   }
 
-  const [filters, setFilters] = useState<FilterBarFilters>({});
 
   // Filter and transform properties for the table
   const tableData: PropertyRow[] = MOCK_PROPERTIES.filter((p) => {
@@ -387,7 +388,7 @@ export default function AdminDashboardPage() {
                       dot={false}
                     />
                     <Tooltip
-                      formatter={(v: number) => formatCurrency(v)}
+                      formatter={(v) => formatNumber(Number(v ?? 0))}
                       contentStyle={{
                         background: '#fff',
                         border: 'none',
@@ -449,7 +450,7 @@ export default function AdminDashboardPage() {
                   <BarChart data={sparklineData} barSize={6}>
                     <Bar dataKey="deals" fill="#161616" radius={[3, 3, 0, 0]} />
                     <Tooltip
-                      formatter={(v: number) => [v, 'Deals']}
+                      formatter={(v) => [Number(v ?? 0), 'Properties']}
                       contentStyle={{
                         background: '#fff',
                         border: 'none',
@@ -493,8 +494,8 @@ export default function AdminDashboardPage() {
 
           <div className="grid lg:grid-cols-[1fr_380px] gap-5">
             <DataTable
-              data={tableData as Record<string, unknown>[]}
-              columns={propertyColumns as Column<Record<string, unknown>>[]}
+              data={tableData}
+              columns={propertyColumns}
               keyField="id"
               pageSize={6}
             />

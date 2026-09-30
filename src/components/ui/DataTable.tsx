@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUpDown } fro
 import { useState, ReactNode } from 'react';
 
 export interface Column<T> {
-  key: string;
+  key: keyof T;
   header: string;
   render?: (row: T) => ReactNode;
   sortable?: boolean;
@@ -15,14 +15,14 @@ export interface Column<T> {
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
-  keyField: string;
+  keyField: keyof T;
   pageSize?: number;
   loading?: boolean;
   emptyMessage?: string;
   className?: string;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   data,
   columns,
   keyField,
@@ -32,7 +32,7 @@ export function DataTable<T extends Record<string, unknown>>({
   className,
 }: DataTableProps<T>) {
   const [page, setPage] = useState(0);
-  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<keyof T | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   const sorted = [...data].sort((a, b) => {
@@ -47,7 +47,7 @@ export function DataTable<T extends Record<string, unknown>>({
   const totalPages = Math.ceil(sorted.length / pageSize);
   const sliced = sorted.slice(page * pageSize, (page + 1) * pageSize);
 
-  const handleSort = (key: string) => {
+  const handleSort = (key: keyof T) => {
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
@@ -56,7 +56,7 @@ export function DataTable<T extends Record<string, unknown>>({
     }
   };
 
-  const SortIcon = ({ col }: { col: string }) => {
+  const SortIcon = ({ col }: { col: keyof T }) => {
     if (sortKey !== col) return <ChevronsUpDown size={13} className="text-gray-300" />;
     return sortDir === 'asc' ? (
       <ChevronUp size={13} className="text-gray-600" />
@@ -73,7 +73,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <tr className="border-b border-gray-50">
               {columns.map((col) => (
                 <th
-                  key={col.key}
+                  key={String(col.key)}
                   className={cn(
                     'text-left py-4 px-5 font-semibold text-gray-500 text-xs uppercase tracking-wide',
                     col.sortable && 'cursor-pointer select-none hover:text-gray-700',
@@ -94,7 +94,7 @@ export function DataTable<T extends Record<string, unknown>>({
               Array.from({ length: pageSize }).map((_, i) => (
                 <tr key={i} className="border-b border-gray-50">
                   {columns.map((col) => (
-                    <td key={col.key} className="py-4 px-5">
+                    <td key={String(col.key)} className="py-4 px-5">
                       <div className="h-4 bg-gray-100 rounded animate-pulse" style={{ width: `${60 + Math.random() * 40}%` }} />
                     </td>
                   ))}
@@ -113,7 +113,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className={cn('py-4 px-5 text-gray-700', col.className)}>
+                    <td key={String(col.key)} className={cn('py-4 px-5 text-gray-700', col.className)}>
                       {col.render ? col.render(row) : String(row[col.key] ?? '')}
                     </td>
                   ))}

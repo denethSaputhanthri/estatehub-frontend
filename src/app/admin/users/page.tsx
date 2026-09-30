@@ -6,7 +6,7 @@ import { SectionTitle } from '@/components/layout/PageWrapper';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { MOCK_USERS } from '@/lib/mockData';
-import { formatDate, getUser, getInitials } from '@/lib/utils';
+import { formatDate, getInitial } from '@/lib/utils';
 import { User } from '@/types';
 import { Search, UserPlus, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,7 +20,7 @@ const userColumns: Column<UserRow>[] = [
     render: (row) => (
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 bg-[#E7B98C]/20 rounded-full flex items-center justify-center flex-shrink-0">
-          <span className="text-xs font-bold text-[#D4A070]">{getInitials({ name: row.name })}</span>
+          <span className="text-xs font-bold text-[#D4A070]">{getInitial({ name: row.name })}</span>
         </div>
         <div>
           <p className="font-semibold text-gray-800 text-sm">{row.name}</p>
@@ -71,6 +71,7 @@ const userColumns: Column<UserRow>[] = [
 
 export default function AdminUsersPage() {
   const { user, loading } = useAuth();
+  const [search, setSearch] = useState('');
 
   if (loading) {
     return (
@@ -83,7 +84,6 @@ export default function AdminUsersPage() {
   if (!user) {
     return null;
   }
-  const [search, setSearch] = useState('');
 
   const filtered = MOCK_USERS.filter((u) => {
     if (!search) return true;
@@ -135,8 +135,8 @@ export default function AdminUsersPage() {
         </div>
 
         <DataTable
-          data={filtered as unknown as Record<string, unknown>[]}
-          columns={userColumns as Column<Record<string, unknown>>[]}
+          data={filtered}
+          columns={userColumns}
           keyField="id"
           pageSize={8}
           emptyMessage="No users found."

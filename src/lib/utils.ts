@@ -54,4 +54,4 @@ export function slugify(str: string): string {
 }
 
 // Re-export auth helpers so pages can import from @/lib/utils
-export { getUser, getToken } from './auth';
+export { getAuthenticatedUser, getToken } from './auth';

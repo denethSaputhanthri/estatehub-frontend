@@ -5,10 +5,10 @@ import { TopNav } from '@/components/layout/TopNav';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { MOCK_INQUIRIES } from '@/lib/mockData';
-import { formatRelative, getUser } from '@/lib/utils';
-import { User, Inquiry } from '@/types';
+import { formatRelative} from '@/lib/utils';
 import { MessageSquare, Send, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Inquiry } from '@/types';
 
 interface RespondModalProps {
   inquiry: Inquiry;
@@ -65,6 +65,8 @@ function RespondModal({ inquiry, onClose, onSend }: RespondModalProps) {
 
 export default function AgentInquiriesPage() {
   const { user, loading } = useAuth();
+  const [inquiries, setInquiries] = useState(MOCK_INQUIRIES);
+  const [responding, setResponding] = useState<Inquiry | null>(null);
 
   if (loading) {
     return (
@@ -77,9 +79,6 @@ export default function AgentInquiriesPage() {
   if (!user) {
     return null;
   }
-
-  const [inquiries, setInquiries] = useState(MOCK_INQUIRIES);
-  const [responding, setResponding] = useState<Inquiry | null>(null);
 
   const handleSend = (id: number, response: string) => {
     setInquiries((prev) =>
@@ -152,8 +151,8 @@ export default function AgentInquiriesPage() {
         </div>
 
         <DataTable
-          data={inquiries as unknown as Record<string, unknown>[]}
-          columns={columns as Column<Record<string, unknown>>[]}
+          data={inquiries}
+          columns={columns}
           keyField="id"
         />
       </div>

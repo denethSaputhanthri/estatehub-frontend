@@ -4,8 +4,6 @@ import { TopNav } from '@/components/layout/TopNav';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { FilterBar, FilterBarFilters } from '@/components/ui/FilterBar';
 import { MOCK_PROPERTIES } from '@/lib/mockData';
-import { getUser } from '@/lib/utils';
-import { User } from '@/types';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -13,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function SellerListingsPage() {
    const { user, loading } = useAuth();
+   const [filters, setFilters] = useState<FilterBarFilters>({});
 
   if (loading) {
     return (
@@ -26,7 +25,6 @@ export default function SellerListingsPage() {
     return null;
   }
 
-  const [filters, setFilters] = useState<FilterBarFilters>({});
 
   // Simulate seller's own properties (first 3)
   const myProperties = MOCK_PROPERTIES.slice(0, 4);

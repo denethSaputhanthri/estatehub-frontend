@@ -6,8 +6,6 @@ import { SectionTitle } from '@/components/layout/PageWrapper';
 import { PropertyCard } from '@/components/ui/PropertyCard';
 import { FilterBar, FilterBarFilters } from '@/components/ui/FilterBar';
 import { MOCK_PROPERTIES } from '@/lib/mockData';
-import { getUser } from '@/lib/utils';
-import { User } from '@/types';
 import Link from 'next/link';
 import { Plus, Grid3X3, List } from 'lucide-react';
 import { DataTable, Column } from '@/components/ui/DataTable';
@@ -64,8 +62,9 @@ const columns: Column<PropertyRow>[] = [
 ];
 
 export default function AdminPropertiesPage() {
-   const { user, loading } = useAuth();
-
+  const { user, loading } = useAuth();
+  const [filters, setFilters] = useState<FilterBarFilters>({});
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F6F4F1]">
@@ -78,8 +77,7 @@ export default function AdminPropertiesPage() {
     return null;
   }
   
-  const [filters, setFilters] = useState<FilterBarFilters>({});
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
 
   const filtered = MOCK_PROPERTIES.filter((p) => {
     if (filters.type && p.type !== filters.type) return false;

@@ -5,13 +5,13 @@ import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { useAuth } from '@/contexts/AuthContext';
 import { MOCK_INQUIRIES } from '@/lib/mockData';
-import { formatDate, formatRelative, getUser } from '@/lib/utils';
+import { formatDate, formatRelative,  } from '@/lib/utils';
 import { User, Inquiry } from '@/types';
 import { MessageSquare, Building2 } from 'lucide-react';
 
 type InquiryRow = Inquiry;
 
-const customerColumns: Column<InquiryRow>[] = [
+const customerColumns: Column<InquiryRow>[] = [ 
   {
     key: 'propertyTitle',
     header: 'Property',

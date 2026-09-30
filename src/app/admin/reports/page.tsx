@@ -3,8 +3,7 @@
 import { TopNav } from '@/components/layout/TopNav';
 import { SectionTitle } from '@/components/layout/PageWrapper';
 import { MOCK_SALES_CHART, MOCK_AGENT_PERFORMANCE, MOCK_PROPERTIES } from '@/lib/mockData';
-import { formatCurrency, formatNumber, getUser } from '@/lib/utils';
-import { User } from '@/types';
+import { formatCurrency, formatNumber } from '@/lib/utils';
 import {
   AreaChart,
   Area,
@@ -131,7 +130,7 @@ export default function AdminReportsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />
-                <Tooltip formatter={(v: number) => formatCurrency(v)} contentStyle={{ background: '#fff', border: 'none', borderRadius: 12, fontSize: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
+                <Tooltip formatter={(v) => formatCurrency(Number(v))} contentStyle={{ background: '#fff', border: 'none', borderRadius: 12, fontSize: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }} />
                 <Area type="monotone" dataKey="totalRevenue" stroke="#161616" strokeWidth={2} fill="url(#salesGrad)" name="Revenue" />
               </AreaChart>
             </ResponsiveContainer>
@@ -192,8 +191,8 @@ export default function AdminReportsPage() {
         <div>
           <SectionTitle title="Agent Performance" subtitle="Top performing agents this quarter" />
           <DataTable
-            data={MOCK_AGENT_PERFORMANCE as unknown as Record<string, unknown>[]}
-            columns={agentColumns as Column<Record<string, unknown>>[]}
+            data={MOCK_AGENT_PERFORMANCE}
+            columns={agentColumns }
             keyField="agentId"
           />
         </div>

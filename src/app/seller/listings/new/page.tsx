@@ -2,8 +2,6 @@
 
 import { useState, useRef } from 'react';
 import { TopNav } from '@/components/layout/TopNav';
-import { getUser } from '@/lib/utils';
-import { User } from '@/types';
 import { Upload, X, ImagePlus, MapPin, DollarSign, Home, Loader2 } from 'lucide-react';
 import { propertiesApi } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -35,6 +33,13 @@ const initialForm: FormData = {
 
 export default function AddPropertyPage() {
   const { user, loading } = useAuth();
+  const [form, setForm] = useState<FormData>(initialForm);
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   if (loading) {
     return (
@@ -47,13 +52,6 @@ export default function AddPropertyPage() {
   if (!user) {
     return null;
   }
-  const [form, setForm] = useState<FormData>(initialForm);
-  const [images, setImages] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
 
   const handleChange = (key: keyof FormData, val: string) =>
     setForm((prev) => ({ ...prev, [key]: val }));

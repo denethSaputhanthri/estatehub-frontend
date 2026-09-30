@@ -5,8 +5,8 @@ import { TopNav } from '@/components/layout/TopNav';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { MOCK_BOOKINGS } from '@/lib/mockData';
-import { formatDate, formatRelative, getUser } from '@/lib/utils';
-import { User, Booking, BookingStatus } from '@/types';
+import { formatDate, formatRelative} from '@/lib/utils';
+import { Booking, BookingStatus } from '@/types';
 import { CalendarDays, Clock, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -17,6 +17,7 @@ const STATUS_ACTIONS: Record<string, { next: BookingStatus; label: string; style
 
 export default function AgentBookingsPage() {
   const { user, loading } = useAuth();
+  const [bookings, setBookings] = useState(MOCK_BOOKINGS);
 
   if (loading) {
     return (
@@ -30,7 +31,6 @@ export default function AgentBookingsPage() {
     return null;
   }
 
-  const [bookings, setBookings] = useState(MOCK_BOOKINGS);
 
   const updateStatus = (id: number, status: BookingStatus) => {
     setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
@@ -130,8 +130,8 @@ export default function AgentBookingsPage() {
         </div>
 
         <DataTable
-          data={bookings as unknown as Record<string, unknown>[]}
-          columns={columns as Column<Record<string, unknown>>[]}
+          data={bookings}
+          columns={columns}
           keyField="id"
         />
       </div>
